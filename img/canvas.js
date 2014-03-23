@@ -186,7 +186,7 @@ if (host == "") host = "localhost:8888";
 var ws = new WebSocket("ws:" + host + "/websocket");
 
 var animInterval = 250;
-var pingInterval = 30 * 100;
+var pingInterval = 30 * 1000;
 var pingCount = 0;
 
 ws.onopen = function(){
