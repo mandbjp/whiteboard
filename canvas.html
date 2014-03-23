@@ -1,319 +1,19 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html lang="ja">
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1" />
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <title></title>
+    <script src="http://code.createjs.com/createjs-2013.12.12.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.3/angular.min.js"></script>
 
-    <style>
-#demoCanvas {
-    cursor: none;
-}
+    <script src="img/canvas.js"></script>
+    <script src="img/angular.js"></script>
+    <title>Canvas</title>
+    <link rel="stylesheet" href="img/style.css" type="text/css" />
 
-.toolbarColorSelect {
-    width: 600px;
-    height: 2.2em;
-    margin-bottom: 0.5em;
-    border: 1px solid gray;
-    background-color: #EEE;
-
-}
-.toolbarColorSelect:after{
-    clear: both;
-}
-
-.colorBtn, .sizeBtn, .clearBtn, .stdBtn {
-    border: 1px dotted #CCC;
-    width: 2em;
-    height: 2em;
-    float: left;
-    overflow: hidden;
-    margin-right: 0.5em;
-}
-.colorBtn:hover, .sizeBtn:hover, .stdBtn:hover {
-    border: 1px solid #773;
-}
-
-.colorBtnActive, .sizeBtnActive, .stdBtn {
-    border: 2px solid black;
-}
-
-.sizeBtn, .clearBtn, .stdBtn {
-    background-color: #DDD;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-}
-
-
-    </style>
 </head>
 <body>
-    <script src="http://code.createjs.com/createjs-2013.12.12.min.js"></script>
-    <script>
-        var stage;
-        var shape;
-        var oldX, oldY;
-        var mouseClicked;
-        var drawColor = '#000';
-        var drawSize = 1;
-
-        var strokes = null;
-
-        function initCanvas() {
-            stage = new createjs.Stage("demoCanvas");
-
-            var circle = new createjs.Shape();
-            circle.graphics.beginFill("gray").drawCircle(0, 0, 3);
-            circle.graphics.beginFill("white").drawCircle(0.25, 0.25, 1);
-
-            shape = new createjs.Shape();
-            stage.addChild(shape);
-            stage.addChild(circle);
-
-            mouseClicked = false;
-            // add handler for stage mouse events:
-            function mouseDown(event){
-                mouseClicked = true;
-                oldX = event.stageX;
-                oldY = event.stageY;
-
-                strokes = new Array();
-                strokes.push({x:oldX, y:oldY});
-            }
-            function mouseUp(event){
-                mouseClicked = false;
-                drawStroke(strokes, drawColor, drawSize, /* send = */ true);
-                strokes = null;
-                stage.update();
-            }
-            function mouseMove(event){
-                if (mouseClicked) {
-                    drawLine(oldX, oldY, event.stageX, event.stageY, drawColor, drawSize);
-                    stage.update();
-                    strokes.push({x:event.stageX, y:event.stageY});
-
-                    if (strokes.length > 10){
-                        drawStroke(strokes, drawColor, drawSize, /* send = */ true);
-                        strokes = new Array();
-                        strokes.push({x:event.stageX, y:event.stageY});
-                        stage.update();
-                    }
-
-                }
-
-                circle.x = event.stageX;
-                circle.y = event.stageY;
-                stage.update();
-
-                oldX = event.stageX;
-                oldY = event.stageY;
-                // console.log(""+event.stageX+", "+event.stageY);
-            }
-
-            stage.on("stagemousedown", mouseDown);
-            stage.on("stagemouseup",   mouseUp  );
-            stage.on("stagemousemove", mouseMove);
-
-            {
-                var demoCanvas = document.getElementById('demoCanvas');
-                var offset = $('#demoCanvas').offset();
-                demoCanvas.addEventListener('touchmove', function(event) {
-                    event.preventDefault();
-                    var param = {
-                        stageX: event.changedTouches[0].pageX - offset.left,
-                        stageY: event.changedTouches[0].pageY - offset.top,
-                    };
-                    mouseMove(param);
-                });
-                demoCanvas.addEventListener('touchstart', function(event) {
-                    event.preventDefault();
-                    var param = {
-                        stageX: event.changedTouches[0].pageX - offset.left,
-                        stageY: event.changedTouches[0].pageY - offset.top,
-                    };
-                    mouseDown(param);
-                });
-                demoCanvas.addEventListener('touchend', function(event) {
-                    event.preventDefault();
-                    var param = {
-                        stageX: 0,
-                        stageY: 0,
-                    };
-                    mouseUp(param);
-                });
-            }
-
-        }
-        $(function(){
-            initCanvas();
-            $(".colorBtn").click(function(){
-                drawColor = $(this).css("background-color");
-
-                $(".colorBtn").removeClass("colorBtnActive");
-                $(this).addClass("colorBtnActive");
-            });
-            $(".sizeBtn").click(function(){
-                drawSize = $(this).html();
-
-                $(".sizeBtn").removeClass("sizeBtnActive");
-                $(this).addClass("sizeBtnActive");
-            });
-            $(".clearBtn").click(function(){
-                clearScreen(/* send = */ true);
-            });
-            $(".actUndo").click(function(){
-                undoDraw(/* send = */ true);
-            });
-            $("body").bind('selectstart', function() {
-                //HTML全体の選択を禁止する
-                return false;
-            });
-            $(window).resize(onResize);
-
-            function onResize(){
-                // 画面いっぱいにキャンバスを広げる
-                /*
-                var offset = $('#demoCanvas').offset();
-                $('#demoCanvas').width ( $(window).width() - offset.left*2 );
-                $('#demoCanvas').height( $(window).height() - offset.top*2 );
-                */
-            }
-            onResize();
-        });
-        function drawLine(fromX, fromY, toX, toY, color, size){
-            // var shape = ...;
-            shape.graphics.beginStroke(color)
-                .setStrokeStyle(size, "round")
-                .moveTo(fromX, fromY)
-                .lineTo(toX, toY);
-        }
-
-        /**
-        * @val stroke array
-        **/
-        function drawStroke (strokes, color, size, send) {
-            if ((strokes == null) || (strokes.length == 0)){
-                console.log("stroke is empty");
-                return;
-            }
-
-            var stroke = shape.graphics.beginStroke(color)
-                .setStrokeStyle(size, "round");
-
-            stroke.moveTo(strokes[0]['x'], strokes[0]['y']);
-            for(var i=1; i<strokes.length; i++){
-                stroke.lineTo(strokes[i]['x'], strokes[i]['y']);
-            }
-            if (send == true){
-                sendStroke(ws, strokes, color, size);                
-            }
-
-        }
-        function clearScreen (send){
-            stage.removeChild(shape);
-
-            //shape 再作成
-            shape = new createjs.Shape();
-            stage.addChild(shape);
-            stage.update();
-
-            if (send == true){
-                sendClearScreen(ws);
-            }
-        }
-        function undoDraw (send){
-            if (send == true){
-                sendUndoDraw(ws);
-            }
-        }
-    </script>
-
-    <script>
-        var host = location.host;
-        if (host == "") host = "localhost:8888";
-        var ws = new WebSocket("ws:" + host + "/websocket");
-        var wsAlive = 0;
-
-        var pingInterval = 30*1000;
-        var pingCount = 0;
-
-        ws.onopen = function(){
-            var data = {
-                command: "RETRIVE_HISTORY",
-            }; 
-            ws.send(JSON.stringify(data) );
-            wsAlive = new Date();
-            setTimeout(sendPing, pingInterval, ws);
-        }
-
-        ws.onmessage = function(evt){
-            var data = JSON.parse(evt.data);
-            var command = data.command;
-
-            switch(command){
-                case "DRAW_STROKES":
-                    drawStroke(data.strokes, data.color, data.size);
-                    stage.update();
-                    break;
-                    
-                case "CLEAR_SCREEN":
-                    clearScreen();
-                    stage.update();
-                    break;
-                    
-                case "PONG":
-                    setTimeout(animPingpong, pingInterval/2)
-                    console.log('PONG');
-                    setTimeout(sendPing, pingInterval, ws);
-                    break;
-
-                default:
-                    console.log('unknown command: ' + command);
-                    break;
-            }
-        }
-        ws.onclose = function(){
-            //alert('disconnected.');
-        }
-
-        function sendPing(ws){
-            wsAlive = new Date();
-            animPingpong()
-            var data = {
-                command: "PING",
-            }; 
-            ws.send(JSON.stringify(data) );
-        }
-        function sendStroke(ws, strokes, color, size){
-            var data = {
-                command: "DRAW_STROKES",
-                strokes: strokes,
-                color:   color,
-                size:    size,
-            }; 
-            ws.send(JSON.stringify(data) );
-        }
-        function sendClearScreen(ws){
-            var data = {
-                command: "CLEAR_SCREEN",
-            }; 
-            ws.send(JSON.stringify(data) );
-        }
-
-        function sendUndoDraw(ws){
-            var data = {
-                command: "UNDO_DRAW",
-            }; 
-            ws.send(JSON.stringify(data) );
-        }
-
-        function animPingpong(){
-            pingCount = (pingCount + 1) % 4;
-            $("#pingpong").attr('src', 'img/pingpong'+(pingCount+1)+'.png');
-        }
-    </script>
     <div class="toolbarColorSelect">
         <div class="colorBtn" style="background-color:#000"></div>
         <div class="colorBtn" style="background-color:#FFF"></div>
@@ -342,7 +42,21 @@
     </div>
 
     <div>
-        <img id="pingpong" src="img/pingpong1.png" onclick="animPingpong()">
+        <img class="pingpong pingpong-1" src="img/pingpong1.png" alt="ping-pong" >
+        <img class="pingpong pingpong-2" src="img/pingpong2.png" alt="ping-pong" >
+        <img class="pingpong pingpong-3" src="img/pingpong3.png" alt="ping-pong" >
+        <img class="pingpong pingpong-4" src="img/pingpong4.png" alt="ping-pong" >
+    </div>
+
+    <div ng-app>
+        <div id="ngPlayerList" ng-controller="PlayerListCtrl">
+            <ul>
+                <li ng-repeat="player in playerList">
+                    <span>{{player.id}} : {{player.name}}</span>
+                    <span class="its-me" ng-show="player.isMe">&lt;me&gt;</span>
+                </li>
+            </ul>
+        </div>
     </div>
 </body>
 </html>

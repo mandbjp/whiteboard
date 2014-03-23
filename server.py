@@ -18,12 +18,32 @@ define("port", default=8888, help="run on the given port", type=int)
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("canvas.html")
+        #self.render("canvas.html")
+        # to avoid template
+        # http://stackoverflow.com/questions/17284286/disable-template-processing-in-tornadoweb
+        with open("./canvas.html", 'r') as f:
+            self.write(f.read())
+
+
+class PlayerlistHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.set_header('Content-type', 'application/json')
+        result = {
+            'count'   : len(players),
+            'players' : []
+        }
+        r = []
+        for player in players:
+            r.append(player.getInfo())
+        result['players'] = r
+        self.write(result)
+
 
 class ImageHandler(tornado.web.RequestHandler):
     def get(self, url):
         #print url
         self.render('img/%s' % url)
+
 
 cone = []
 history = None
@@ -36,16 +56,18 @@ class PlayerObject(object):
         self.name = 'JOHNDOE'
         self.cone = cone
 
-    def getCone(self):
-        return self.cone
+    def getInfo(self):
+        result = {
+            'id'  : self.id,
+            'name': self.name,
+        }
+        return result
 
-    def setName(self, name):
-        self.name = name
-
-    def setId(self, id):
-        self.id = id
-
-
+def findPlayerByCone(cone):
+    for player in players:
+        if (player.cone == cone):
+            return player
+    return None
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
     # def __init__(self, application, request, **kwargs):
@@ -58,6 +80,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             cone.append(self)
             player = PlayerObject(self)
             player.name = "Artist%03d" % artistCount
+            player.id   = artistCount
             artistCount += 1
             players.append(player)
         print "-------------------"
@@ -70,6 +93,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
         if self in cone:
             cone.remove(self)
+        for player in players:
+            if (player.cone == self):
+                players.remove(player)
         print "------------------"
         print "dis-connected"
         print cone
@@ -81,6 +107,18 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
         if (js['command'] == 'PING'):
             ret = {'command': 'PONG'}
+            self.write_message(json.dumps(ret))
+            return
+
+        if (js['command'] == 'MYINFO'):
+            player = findPlayerByCone(self)
+            if (player == None):
+                print 'WHO ARE YOU!?'
+                return;
+            ret = {
+                'command': 'MYINFO',
+                'info'   : player.getInfo()
+            }
             self.write_message(json.dumps(ret))
             return
 
@@ -140,6 +178,7 @@ class HistoryDB(object):
 
         jsonMessage = json.loads(message)
         jsonMessage['color'] = '#FFF'
+        jsonMessage['size']  = int(jsonMessage['size']) + 1
         return json.dumps(jsonMessage)
 
     def retrive(self, cone):
@@ -160,9 +199,11 @@ def main():
     tornado.options.parse_command_line()
     application = tornado.web.Application([
         (r"/", MainHandler),
+        (r"/players", PlayerlistHandler),
         (r"/websocket", SocketHandler),
 
-        (r"/img/(.*)", ImageHandler),
+        # to avoid templates
+        (r"/img/(.*)", tornado.web.StaticFileHandler, {"path": "./img/"}),
     ])
 
     print "server starting at PORT=%d" % options.port

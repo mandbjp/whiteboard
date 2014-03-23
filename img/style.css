@@ -1,0 +1,49 @@
+#demoCanvas {
+    cursor: none;
+}
+
+.toolbarColorSelect {
+    width: 600px;
+    height: 2.2em;
+    margin-bottom: 0.5em;
+    border: 1px solid gray;
+    background-color: #EEE;
+
+}
+.toolbarColorSelect:after{
+    clear: both;
+}
+
+.colorBtn, .sizeBtn, .clearBtn, .stdBtn {
+    border: 1px dotted #CCC;
+    width: 2em;
+    height: 2em;
+    float: left;
+    overflow: hidden;
+    margin-right: 0.5em;
+}
+.colorBtn:hover, .sizeBtn:hover, .stdBtn:hover {
+    border: 1px solid #773;
+}
+
+.colorBtnActive, .sizeBtnActive, .stdBtn,
+.colorBtnActive:hover, .sizeBtnActive:hover, .stdBtn:hover {
+    border: 2px solid black;
+}
+
+.sizeBtn, .clearBtn, .stdBtn {
+    background-color: #DDD;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.pingpong {
+    display: none;
+}
+
+/* playerList */
+.its-me{
+    font-style: italic;
+    color: #888;
+}
