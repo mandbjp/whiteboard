@@ -15,8 +15,12 @@ from threading import RLock
 
 define("port", default=8888, help="run on the given port", type=int)
 
-
 class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+        with open("./index.html", 'r') as f:
+            self.write(f.read())
+
+class OldMainHandler(tornado.web.RequestHandler):
     def get(self):
         #self.render("canvas.html")
         # to avoid template
@@ -199,11 +203,14 @@ def main():
     tornado.options.parse_command_line()
     application = tornado.web.Application([
         (r"/", MainHandler),
+        (r"/old", OldMainHandler),
         (r"/players", PlayerlistHandler),
         (r"/websocket", SocketHandler),
 
         # to avoid templates
         (r"/img/(.*)", tornado.web.StaticFileHandler, {"path": "./img/"}),
+        (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": "./static/"}),
+        (r"/robots.txt", tornado.web.StaticFileHandler, {"path": "./robots.txt"}),
     ])
 
     print "server starting at PORT=%d" % options.port
