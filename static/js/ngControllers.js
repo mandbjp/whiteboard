@@ -4,7 +4,7 @@ var canvasAppControllers = angular.module('canvasAppControllers', []);
 
 /* CavasCtrl */
 canvasAppControllers.controller('CanvasCtrl',
-  function($scope, $log, CanvasService) {
+  function($scope, $log, CanvasService, $timeout) {
     $log.info('===============CanvasCtrl===============');
 
     $scope.name="joh!";
@@ -19,6 +19,9 @@ canvasAppControllers.controller('CanvasCtrl',
     $scope.resizeCanvas = function(){
       $scope.canvasWidth  = $scope.windowWidth  - $('#toggleExample').offset().left - 30;
       $scope.canvasHeight =  $('.navbar-absolute-bottom').offset().top - $('#toggleExample').offset().top - 30;
+      $timeout(function(){
+        $scope.canvasInstance.updateStage();
+      }, 500);
     };
 
     $scope.canvasInstance = new CanvasClass();

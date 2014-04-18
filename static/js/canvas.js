@@ -194,6 +194,14 @@ function CanvasClass(){
             myInstance.socketInstance.sendClearScreen();
         }
     }
+    this.updateStage = function(){
+        // TODO: thisが使えない！！
+        myInstance = angular.element('#ngView').scope().canvasInstance.myInstance;
+        if (!myInstance.initialized){ return; }
+
+        myInstance.stage.update();
+    }
+    
     this.undoDraw = function(send){
         // TODO: thisが使えない！！
         myInstance = angular.element('#ngView').scope().canvasInstance.myInstance;
