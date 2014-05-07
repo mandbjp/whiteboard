@@ -1,0 +1,39 @@
+<h1 class="app-name">Canvas App</h1>
+
+<div class="scrollable">
+  <div class="scrollable-content">
+    <div class="list-group" toggle="off" bubble target="mainSidebar">
+      <a   class="list-group-item" href="#/"><i class="fa fa-pencil"></i> Canvas <i class="fa fa-chevron-right pull-right"></i></a>
+      <div class="list-group-item" 
+        toggle="toggle" target-class="sidebarColorPalette"><i class="fa fa-circle"></i> Color <i class="sidebarColorPalette fa-chevron-down fa pull-right" 
+        toggleable 
+        inactive-class="fa-chevron-down" 
+        active-class="fa-chevron-up "></i>
+        <div toggleable class="sidebarColorPalette panel-collapse collapse" inactive-class="panel-collapse collapse" >
+          <ul class="colorList">
+            <li class="colorListItem" ng-repeat="item in colorList" ng-click="toggle('mainSidebar', 'off')">
+              <i class="fa fa-circle colorBtn" ng-click="colorBtnClick(item.color)" canvasColor="{{item.color}}" style="color:{{item.color}}"></i>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="list-group-item" 
+        toggle="toggle" target-class="sidebarPenSizePalette"><i class="fa fa-expand"></i> Size <i class="sidebarPenSizePalette fa-chevron-down fa pull-right" 
+        toggleable 
+        inactive-class="fa-chevron-down" 
+        active-class="fa-chevron-up "></i>
+        <div toggleable class="sidebarPenSizePalette panel-collapse collapse" inactive-class="panel-collapse collapse" >
+          <ul class="penSizeList">
+            <li class="penSizeListItem" ng-repeat="item in penSizeList" ng-click="toggle('mainSidebar', 'off')">
+              <div ng-click="sizeBtnClick(item.penSize)" >
+                <i class="fa fa-circle" canvasPenSize="{{item.penSize}}" style="font-size:{{item.penSize}}px"></i> {{item.penSize}}
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div  class="list-group-item" ng-click='clearBtnClick()'><i class="fa fa-file-o"></i> Clear Draw <i class="fa fa-play pull-right"></i></div>
+      <a class="list-group-item" href="#/color-picker"><i class="fa fa-unlink"></i> Mode <i class="fa fa-chevron-right pull-right"></i></a>
+    </div>
+  </div>
+</div>

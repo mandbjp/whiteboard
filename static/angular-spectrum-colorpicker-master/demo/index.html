@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" ng-app="colorpickerApp">
+<head>
+  <meta charset="utf-8">
+  <title>My angular scpectrum demo</title>
+
+  <!-- bower libs -->
+  <script src="/bower_components/jquery/jquery.js"></script>
+  <script src="/bower_components/angular/angular.min.js"></script>
+  <link rel="stylesheet" href="/bower_components/spectrum/spectrum.css" />
+  <script src="/bower_components/spectrum/spectrum.js"></script>
+
+  <!-- colorpicker module -->
+  <script src="/src/js/spectrumColorpicker.module.js"></script>
+  <script src="/src/js/spectrumColorpicker.directive.js"></script>
+
+  <!-- demo stuff -->
+  <link rel="stylesheet" href="/demo/styles.css" />
+  <script src="/demo/app.js"></script>
+</head>
+
+<body ng-controller="ColorPickerCtrl">
+
+  <h1>My angular scpectrum demo</h1>
+
+
+  <input type="text" name="uschi" ng-model="uschiColor">
+  <label id="theTrigger">Click here to open colorpicker</label>
+
+  <spectrum-colorpicker trigger-id="theTrigger" ng-model="uschiColor" options="{showInput: true, showAlpha: true, showPalette: true, palette: [['black', 'white', 'blanchedalmond'],['rgb(255, 128, 0);', 'hsv 100 70 50', 'lightyellow']]}"></spectrum-colorpicker>
+
+  <br>
+  <button ng-click="uschiColor='#ffffff'">set color to #ffffff</button>
+
+</body>
+</html>

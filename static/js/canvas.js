@@ -1,6 +1,6 @@
 
 // canvas ----------------------------------------------------------
-function CanvasClass(){
+var CanvasClass = function(){
     this.stage = null;
     this.circle = null;
     this.shape = null;
@@ -221,13 +221,15 @@ function defaultLogger(obj){
     console.log(obj);
 }
 
-function CanvasSocket(){
+var CanvasSocket = function(){
     this.ws = null;
     this.canvasInstance = null;
     this.myInstance = this;
 
     this.logger = defaultLogger;
     this.$scope = null;
+
+    this.myInfo = {}; // サーバー上のＩＤ等、自分の情報
 
     this.initialize = function(canvasInstance, host, $scope, logger){
         this.canvasInstance = canvasInstance;
@@ -252,6 +254,10 @@ function CanvasSocket(){
         myInstance = angular.element('#ngView').scope().canvasSocket.myInstance;
         myInstance.logger('===============CanvasSocket:socketOnOpen===============');
 
+        var data = {
+            command: "MYINFO",
+        };
+        this.send(JSON.stringify(data) );
         var data = {
             command: "RETRIVE_HISTORY",
         };
@@ -285,11 +291,31 @@ function CanvasSocket(){
                 break;
 
             case "MYINFO":
-                var ngScope = angular.element('#ngPlayerList').scope();
-                ngScope.myInfo = data.info;
-                ngScope.$apply();
-                console.log('this is me : ');
-                console.log(data.info);
+                try{
+                    // old Canvas用
+                    var ngScope = angular.element('#ngPlayerList').scope();
+                    ngScope.myInfo = data.info;
+                    ngScope.$apply();
+                    console.log('this is me : ');
+                    console.log(data.info);
+                }catch(e){
+                    console.log(e);
+                }
+                myInstance.myInfo = data.info;
+                break;
+
+            case "PEN_UPDATE":
+                if (myInstance.myInfo.id !== data.targetId){
+                    console.log('wrong target : '+data.targetId);
+                }
+                if (isset(data.color)){
+                    console.log('updated color: ' + data.color);
+                    canvasInstance.drawColor = data.color;
+                }
+                if (isset(data.size)){
+                    console.log('updated size: ' + data.size);
+                    canvasInstance.drawSize = data.size;
+                }
                 break;
 
             default:
@@ -325,6 +351,16 @@ function CanvasSocket(){
         var data = {
             command: "UNDO_DRAW",
         };
+        this.ws.send(JSON.stringify(data) );
+    }
+
+    this.sendPenUpdate = function(targetId, color, size){
+        var data = {
+            command : "PEN_UPDATE",
+            targetId: targetId,
+        };
+        if (color !== null){ data['color'] = color; }
+        if (size  !== null){ data['size' ] = size;  }
         this.ws.send(JSON.stringify(data) );
     }
 }

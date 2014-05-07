@@ -6,6 +6,9 @@ var canvasApp = angular.module('canvasApp', [
   "mobile-angular-ui.touch",
   "mobile-angular-ui.scrollable",
 
+  'angularSpectrumColorpicker',
+  'uiSlider',
+
   'canvasAppControllers',
   'canvasAppDirectives',
   'canvasAppServices',
@@ -16,6 +19,10 @@ canvasApp.config(function($routeProvider, $locationProvider) {
     when('/',{
       templateUrl: "static/view/canvas.html",
       controller: "CanvasCtrl"
+    }).
+    when('/color-picker',{
+      templateUrl: "static/view/color-picker.html",
+      controller: "ColorPickerCtrl"
     }).
     otherwise({
       redirectTo: '/'

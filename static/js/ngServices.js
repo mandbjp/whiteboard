@@ -62,175 +62,38 @@ canvasAppServices.service('CanvasService',
     this.canvasSocket = null;
     return;
 
-    // this.stage = null;
-    // this.shape = null;
-    // this.circle = null;
-
-    // this.oldX = 0;
-    // this.oldY = 0;
-    // this.strokes = null;
-    // this.canvasElementId = null;
-
-    // this.drawColor = '#000';
-    // this.drawSize  = 1;
-    // this.mouseClicked = false;
-    // this.initialized = false;
-
-    // this.init = function(elementId){
-    //   $log.info('===============CanvasService:init===============');
-
-    //   this.mouseClicked = false;
-    //   this.canvasElementId = elementId;
-
-    //   var stage = this.stage = new createjs.Stage(this.canvasElementId);
-
-    //   var circle = this.circle = new createjs.Shape();
-    //   circle.graphics.beginFill("gray").drawCircle(0, 0, 3);
-    //   circle.graphics.beginFill("white").drawCircle(0.25, 0.25, 1);
-
-    //   // function mouseDown(event){
-    //   //     this.mouseClicked = true;
-    //   //     this.oldX = event.stageX;
-    //   //     this.oldY = event.stageY;
-
-    //   //     this.strokes = new Array();
-    //   //     this.strokes.push({x:this.oldX, y:this.oldY});
-    //   // }
-    //   // function mouseUp(event){
-    //   //     this.mouseClicked = false;
-    //   //     this.drawStroke(this.strokes, this.drawColor, this.drawSize, /* send = */ true);
-    //   //     this.strokes = null;
-    //   //     stage.update();
-    //   // }
-    //   // function mouseMove(event){
-    //   //     if (this.mouseClicked) {
-    //   //         this.drawLine(this.oldX, this.oldY, event.stageX, event.stageY, this.drawColor, this.drawSize);
-    //   //         stage.update();
-    //   //         this.strokes.push({x:event.stageX, y:event.stageY});
-
-    //   //         if (this.strokes.length > 10){
-    //   //             this.drawStroke(this.strokes, this.drawColor, this.drawSize, /* send = */ true);
-    //   //             this.strokes = new Array();
-    //   //             this.strokes.push({x:event.stageX, y:event.stageY});
-    //   //             stage.update();
-    //   //         }
-
-    //   //     }
-
-    //   //     circle.x = event.stageX;
-    //   //     circle.y = event.stageY;
-    //   //     stage.update();
-
-    //   //     this.oldX = event.stageX;
-    //   //     this.oldY = event.stageY;
-    //   //     // console.log(""+event.stageX+", "+event.stageY);
-    //   // }
-
-    //   stage.on("stagemousedown", angular.element('#ngView').scope().canvasMouseDown);
-    //   stage.on("stagemouseup",   angular.element('#ngView').scope().canvasMouseUp  );
-    //   stage.on("stagemousemove", angular.element('#ngView').scope().canvasMouseMove);
-
-    //   this.initialized = true;
-    // }
-
-    // this.onCavasShow = function(){
-    //     $log.info('===============CanvasService:onCavasShow===============');
-    //       // add touch events
-    //     var demoCanvas = document.getElementById(this.canvasElementId);
-    //     var offset = $('#'+this.canvasElementId).offset();
-    //     demoCanvas.addEventListener('touchmove', function(event) {
-    //         event.preventDefault();
-    //         var param = {
-    //             stageX: event.changedTouches[0].pageX - offset.left,
-    //             stageY: event.changedTouches[0].pageY - offset.top,
-    //         };
-    //         mouseMove(param);
-    //     });
-    //     demoCanvas.addEventListener('touchstart', function(event) {
-    //         event.preventDefault();
-    //         var param = {
-    //             stageX: event.changedTouches[0].pageX - offset.left,
-    //             stageY: event.changedTouches[0].pageY - offset.top,
-    //         };
-    //         mouseDown(param);
-    //     });
-    //     demoCanvas.addEventListener('touchend', function(event) {
-    //         event.preventDefault();
-    //         var param = {
-    //             stageX: 0,
-    //             stageY: 0,
-    //         };
-    //         mouseUp(param);
-    //     });
-    // };
-
-    // this.mouseDown = function(event){
-    //     this.mouseClicked = true;
-    //     this.oldX = event.stageX;
-    //     this.oldY = event.stageY;
-
-    //     this.strokes = new Array();
-    //     this.strokes.push({x:this.oldX, y:this.oldY});
-    // }
-    // this.mouseUp = function(event){
-    //     this.mouseClicked = false;
-    //     this.drawStroke(this.strokes, this.drawColor, this.drawSize, /* send = */ true);
-    //     this.strokes = null;
-    //     stage.update();
-    // }
-    // this.mouseMove = function(event){
-    //     if (!this.initialized) { return; }
-    //     if (this.mouseClicked) {
-    //         this.drawLine(this.oldX, this.oldY, event.stageX, event.stageY, this.drawColor, this.drawSize);
-    //         stage.update();
-    //         this.strokes.push({x:event.stageX, y:event.stageY});
-
-    //         if (this.strokes.length > 10){
-    //             this.drawStroke(this.strokes, this.drawColor, this.drawSize, /* send = */ true);
-    //             this.strokes = new Array();
-    //             this.strokes.push({x:event.stageX, y:event.stageY});
-    //             stage.update();
-    //         }
-
-    //     }
-
-    //     this.circle.x = event.stageX;
-    //     this.circle.y = event.stageY;
-    //     stage.update();
-
-    //     this.oldX = event.stageX;
-    //     this.oldY = event.stageY;
-    //     // console.log(""+event.stageX+", "+event.stageY);
-    // }
+  }
+);
 
 
-    // this.drawLine = function(fromX, fromY, toX, toY, color, size){
-    //     // var shape = ...;
-    //     shape.graphics.beginStroke(color)
-    //         .setStrokeStyle(size, "round")
-    //         .moveTo(fromX, fromY)
-    //         .lineTo(toX, toY);
-    // }
-    // /**
-    // * @val stroke array
-    // **/
-    // this.drawStroke = function(strokes, color, size, send) {
-    //     if ((strokes == null) || (strokes.length == 0)){
-    //         console.log("stroke is empty");
-    //         return;
-    //     }
+canvasAppServices.service('PlayerListService',
+  function($log, $http, $interval) {
+    var _this = this;
+    this.autoUpdate = false;
+    this.updateInterval = 3000;
+    this.players = [];
 
-    //     var stroke = shape.graphics.beginStroke(color)
-    //         .setStrokeStyle(size, "round");
+    this.updatePlayers = function(){
+      $http.get('/players').success(function(data, status, headers, config){
+        _this.setPlayers(data.players);
+        // console.log(data.players);
+        console.log($scope);
 
-    //     stroke.moveTo(strokes[0]['x'], strokes[0]['y']);
-    //     for(var i=1; i<strokes.length; i++){
-    //         stroke.lineTo(strokes[i]['x'], strokes[i]['y']);
-    //     }
-    //     if (send == true){
-    //         sendStroke(ws, strokes, color, size);
-    //     }
-    // }
+      });
+    }
+    this.setPlayers = function(value){
+      this.players = value;
+    }
+    this.getPlayers = function(){
+      return this.players;
+    }
+
+    $interval(function(){
+      if (_this.autoUpdate){
+        _this.updatePlayers();
+      }
+    }, this.updateInterval);
+
   }
 );
 

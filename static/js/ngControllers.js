@@ -7,8 +7,6 @@ canvasAppControllers.controller('CanvasCtrl',
   function($scope, $log, CanvasService, $timeout) {
     $log.info('===============CanvasCtrl===============');
 
-    $scope.name="joh!";
-
     $scope.$watch('windowWidth',  function(newValue, oldValue){
       $scope.resizeCanvas();
     });
@@ -17,8 +15,8 @@ canvasAppControllers.controller('CanvasCtrl',
     });
 
     $scope.resizeCanvas = function(){
-      $scope.canvasWidth  = $scope.windowWidth  - $('#toggleExample').offset().left - 30;
-      $scope.canvasHeight =  $('.navbar-absolute-bottom').offset().top - $('#toggleExample').offset().top - 30;
+      $scope.canvasWidth  = $scope.windowWidth - $('#toggleExample').offset().left - 30;
+      $scope.canvasHeight = $('.navbar-absolute-bottom').offset().top - $('#toggleExample').offset().top - 30;
       $timeout(function(){
         $scope.canvasInstance.updateStage();
       }, 500);
@@ -39,17 +37,7 @@ canvasAppControllers.controller('CanvasCtrl',
 
       //CanvasService.onCavasShow($scope);
     });
-/*
-    $scope.canvasMouseUp   = function(event){
-      CanvasService.mouseUp(event, $scope);
-    }
-    $scope.canvasMouseDown = function(event){
-      CanvasService.mouseDown(event, $scope);
-    }
-    $scope.canvasMouseMove = function(event){
-      CanvasService.mouseMove(event, $scope);
-    }
-    */
+
   }
 );
 
@@ -98,6 +86,37 @@ canvasAppControllers.controller('SidebarCtrl',
   }
 );
 
+
+/* PlayerListCtrl */
+canvasAppControllers.controller('PlayerListCtrl',
+  function($scope, $log, CanvasService, $http, $interval) {
+    $log.info('===============PlayerListCtrl===============');
+
+    // $timeout()
+    // $http.get('/players').success(function(data, status, headers, config){
+    //   $scope.players = data.players;
+    // // });
+    // PlayerListService.autoUpdate = true;
+    // PlayerListService.updatePlayers();
+    // $scope.players = PlayerListService.getPlayers();
+
+    $scope.updatePlayers = function(){
+      $http.get('/players').success(function(data, status, headers, config){
+        $scope.players = data.players;
+        // console.log(data.players);
+      });
+    }
+    $interval(function(){
+        $scope.updatePlayers();
+    }, 3000);
+
+    // $scope.players = [{id: 7, name: "Artist007"}, {id: 25, name: "Artist025"}];
+    $scope.playerClicked = function(id){
+      $log.info("clicked: " + id);
+    };
+  }
+);
+
 /* BottomToolbar */
 canvasAppControllers.controller('BottomToolbarCtrl',
   function($scope, $log, CanvasService) {
@@ -109,3 +128,56 @@ canvasAppControllers.controller('BottomToolbarCtrl',
 
   }
 );
+
+
+
+/* ColorPickerCtrl */
+canvasAppControllers.controller('ColorPickerCtrl',
+  function($scope, $log, CanvasService, $location, $http) {
+    $log.info('===============ColorPickerCtrl===============');
+
+    // 以下バグ回避, TODO: fix this?
+    $scope.canvasInstance = {
+      myInstance : {
+        initialize: false
+      }
+    };
+
+    if (CanvasService.canvasSocket == null){
+      // ソケットが作成されていない場合は、キャンバスにリダイレクト
+      $log.info('socket is not ready. redirecting...');
+      $location.path('/');
+      $scope.$apply();
+    }
+    $http.get('/players').success(function(data, status, headers, config){
+      $scope.players = data.players;
+    });
+
+    $scope.canvasSocket = CanvasService.canvasSocket;
+
+    $scope.penSize = 8;
+    $scope.targetId = 0;
+    $scope.pickedColor = "#445566";
+
+    $scope.$watch('pickedColor',  function(newValue, oldValue){
+      $log.debug(newValue);
+      var color = newValue;
+      var size = null;
+      $scope.canvasSocket.sendPenUpdate($scope.targetId, color, size);
+    });
+
+    $scope.$watch('penSize',  function(newValue, oldValue){
+      $log.debug(newValue);
+      var color = null;
+      var size = newValue;
+      $scope.canvasSocket.sendPenUpdate($scope.targetId, color, size);
+    });
+
+    $scope.playerClicked = function(id){
+      $log.info(id);
+      $scope.targetId = id;
+    }
+  }
+);
+
+

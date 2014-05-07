@@ -1,0 +1,15 @@
+
+<div class="container section section-break" >
+  <div>
+    <!-- @see https://github.com/Jimdo/angular-spectrum-colorpicker -->
+    <spectrum-colorpicker ng-model="pickedColor" options="{flat: true, showAlpha: true, showButtons: false}" ></spectrum-colorpicker>
+    <slider floor="1" ceiling="72" step="1" precision="0" ng-model="penSize"></slider>
+    <h1>{{pickedColor}}</h1>
+    <h1>{{targetId}}</h1>
+    <h1>{{penSize}}</h1>
+    <ul>
+      <li ng-repeat="player in players" ng-click="playerClicked(player.id)">{{player.id}}: {{player.name}}</li>
+    </ul>
+  </div>
+</div>
+

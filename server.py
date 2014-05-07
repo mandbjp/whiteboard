@@ -73,6 +73,12 @@ def findPlayerByCone(cone):
             return player
     return None
 
+def findPlayerById(id):
+    for player in players:
+        if (player.id == id):
+            return player
+    return None
+
 class SocketHandler(tornado.websocket.WebSocketHandler):
     # def __init__(self, application, request, **kwargs):
     #     tornado.websocket.WebSocketHandler.__init__(self, application, request, **kwargs)
@@ -135,12 +141,19 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 i.write_message(msg)
             return
 
-
         if (js['command'] == 'CLEAR_SCREEN'):
             history.clear()
 
         if (js['command'] == 'RETRIVE_HISTORY'):
             history.retrive(self)
+            return
+
+        if (js['command'] == 'PEN_UPDATE'):
+            player = findPlayerById(js['targetId'])
+            if (player == None):
+                print 'ID [%s] not found' % js['targetId']
+                return;
+            player.cone.write_message(json.dumps(js))
             return
 
         for i in cone:
